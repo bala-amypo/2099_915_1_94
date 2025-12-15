@@ -1,5 +1,5 @@
 package com.example.demo.dto;
 
-public class AutoResponse {
+public class AuthResponse {
     
 }
