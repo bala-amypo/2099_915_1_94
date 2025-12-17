@@ -1,3 +1,3 @@
-public class Bin {
+ public class Bin {
     
 }
