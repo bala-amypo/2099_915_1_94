@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class ZoneServiceImpl implements ZoneService {
     
     private final ZoneRepository zoneRepository;
@@ -53,8 +54,7 @@ public class ZoneServiceImpl implements ZoneService {
         }
         Zone zone = getZoneById(id);
         zone.setActive(false);
-        @SuppressWarnings("null")
-        Zone saved = zoneRepository.save(zone);
+        zoneRepository.save(zone);
     }
     
     @Override
