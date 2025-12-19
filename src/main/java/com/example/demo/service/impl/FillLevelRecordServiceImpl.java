@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class FillLevelRecordServiceImpl implements FillLevelRecordService {
     
     private final FillLevelRecordRepository recordRepository;
@@ -28,7 +29,6 @@ public class FillLevelRecordServiceImpl implements FillLevelRecordService {
             throw new BadRequestException("Bin is required");
         }
         
-        @SuppressWarnings("null")
         Bin bin = binRepository.findById(record.getBin().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
         

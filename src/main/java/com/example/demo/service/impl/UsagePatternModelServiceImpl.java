@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class UsagePatternModelServiceImpl implements UsagePatternModelService {
     
     private final UsagePatternModelRepository modelRepository;
@@ -27,7 +28,6 @@ public class UsagePatternModelServiceImpl implements UsagePatternModelService {
             throw new BadRequestException("Bin is required");
         }
         
-        @SuppressWarnings("null")
         Bin bin = binRepository.findById(model.getBin().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
         
@@ -76,10 +76,8 @@ public class UsagePatternModelServiceImpl implements UsagePatternModelService {
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
         
-        @SuppressWarnings("null")
-        UsagePatternModel result = modelRepository.findTop1ByBinOrderByLastUpdatedDesc(bin)
+        return modelRepository.findTop1ByBinOrderByLastUpdatedDesc(bin)
                 .orElseThrow(() -> new ResourceNotFoundException("No model found for bin"));
-        return result;
     }
     
     @Override

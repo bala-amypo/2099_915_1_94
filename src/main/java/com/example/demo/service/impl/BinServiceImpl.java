@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class BinServiceImpl implements BinService {
     
     private final BinRepository binRepository;
@@ -31,7 +32,6 @@ public class BinServiceImpl implements BinService {
             throw new BadRequestException("Zone is required");
         }
         
-        @SuppressWarnings("null")
         Zone zone = zoneRepository.findById(bin.getZone().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
         
@@ -80,8 +80,7 @@ public class BinServiceImpl implements BinService {
         }
         Bin bin = getBinById(id);
         bin.setActive(false);
-        @SuppressWarnings("null")
-        Bin saved = binRepository.save(bin);
+        binRepository.save(bin);
     }
     
     @Override
