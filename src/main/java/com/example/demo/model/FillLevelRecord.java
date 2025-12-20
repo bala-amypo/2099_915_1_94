@@ -21,35 +21,15 @@ public class FillLevelRecord {
 
     // ---------------- Getters & Setters ----------------
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Double getFillPercentage() { return fillPercentage; }
+    public void setFillPercentage(Double fillPercentage) { this.fillPercentage = fillPercentage; }
 
-    public Double getFillPercentage() {
-        return fillPercentage;
-    }
+    public LocalDateTime getRecordedAt() { return recordedAt; }
+    public void setRecordedAt(LocalDateTime recordedAt) { this.recordedAt = recordedAt; }
 
-    public void setFillPercentage(Double fillPercentage) {
-        this.fillPercentage = fillPercentage;
-    }
-
-    public LocalDateTime getRecordedAt() {
-        return recordedAt;
-    }
-
-    public void setRecordedAt(LocalDateTime recordedAt) {
-        this.recordedAt = recordedAt;
-    }
-
-    public Bin getBin() {
-        return bin;
-    }
-
-    public void setBin(Bin bin) {
-        this.bin = bin;
-    }
+    public Bin getBin() { return bin; }
+    public void setBin(Bin bin) { this.bin = bin; }
 }
