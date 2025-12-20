@@ -1,67 +1,40 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "overflow_predictions")
 public class OverflowPrediction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer daysUntilFull;
-
-    private LocalDate predictedFullDate;
-
     @ManyToOne
-    @JoinColumn(name = "bin_id")
-    private Bin bin;
+    @JoinColumn(name = "zone_id")
+    private Zone zone;
 
-    @ManyToOne
-    @JoinColumn(name = "model_id")
-    private UsagePatternModel modelUsed;
+    private double predictedLevel;
 
-    // ---------------- Getters & Setters ----------------
+    private LocalDateTime timestamp;
 
-    public Long getId() {
-        return id;
+    public OverflowPrediction() {}
+
+    public OverflowPrediction(Zone zone, double predictedLevel, LocalDateTime timestamp) {
+        this.zone = zone;
+        this.predictedLevel = predictedLevel;
+        this.timestamp = timestamp;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Integer getDaysUntilFull() {
-        return daysUntilFull;
-    }
+    public Zone getZone() { return zone; }
+    public void setZone(Zone zone) { this.zone = zone; }
 
-    public void setDaysUntilFull(Integer daysUntilFull) {
-        this.daysUntilFull = daysUntilFull;
-    }
+    public double getPredictedLevel() { return predictedLevel; }
+    public void setPredictedLevel(double predictedLevel) { this.predictedLevel = predictedLevel; }
 
-    public LocalDate getPredictedFullDate() {
-        return predictedFullDate;
-    }
-
-    public void setPredictedFullDate(LocalDate predictedFullDate) {
-        this.predictedFullDate = predictedFullDate;
-    }
-
-    public Bin getBin() {
-        return bin;
-    }
-
-    public void setBin(Bin bin) {
-        this.bin = bin;
-    }
-
-    public UsagePatternModel getModelUsed() {
-        return modelUsed;
-    }
-
-    public void setModelUsed(UsagePatternModel modelUsed) {
-        this.modelUsed = modelUsed;
-    }
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 }
