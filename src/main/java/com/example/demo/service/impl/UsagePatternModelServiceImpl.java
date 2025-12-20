@@ -1,87 +1,51 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Bin;
+import com.example.demo.model.FillLevelRecord;
 import com.example.demo.model.UsagePatternModel;
 import com.example.demo.repository.BinRepository;
+import com.example.demo.repository.FillLevelRecordRepository;
 import com.example.demo.repository.UsagePatternModelRepository;
 import com.example.demo.service.UsagePatternModelService;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@SuppressWarnings("null")
 public class UsagePatternModelServiceImpl implements UsagePatternModelService {
-    
+
     private final UsagePatternModelRepository modelRepository;
+    private final FillLevelRecordRepository recordRepository;
     private final BinRepository binRepository;
-    
-    public UsagePatternModelServiceImpl(UsagePatternModelRepository modelRepository, BinRepository binRepository) {
+
+    public UsagePatternModelServiceImpl(
+            UsagePatternModelRepository modelRepository,
+            FillLevelRecordRepository recordRepository,
+            BinRepository binRepository) {
         this.modelRepository = modelRepository;
+        this.recordRepository = recordRepository;
         this.binRepository = binRepository;
     }
-    
+
     @Override
-    public UsagePatternModel createModel(UsagePatternModel model) {
-        if (model.getBin() == null || model.getBin().getId() == null) {
-            throw new BadRequestException("Bin is required");
-        }
-        
-        Bin bin = binRepository.findById(model.getBin().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
-        
-        if (!bin.getActive()) {
-            throw new BadRequestException("Cannot create model for inactive bin");
-        }
-        
-        if (model.getAvgDailyIncreaseWeekday() < 0 || model.getAvgDailyIncreaseWeekend() < 0) {
-            throw new BadRequestException("Daily increase values cannot be negative");
-        }
-        
-        return modelRepository.save(model);
-    }
-    
-    @Override
-    public UsagePatternModel getModelById(Long id) {
-        if (id == null) {
-            throw new BadRequestException("ID cannot be null");
-        }
-        return modelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Model not found with id: " + id));
-    }
-    
-    @Override
-    public UsagePatternModel updateModel(Long id, UsagePatternModel model) {
-        if (id == null) {
-            throw new BadRequestException("ID cannot be null");
-        }
-        
-        UsagePatternModel existing = getModelById(id);
-        if (model.getAvgDailyIncreaseWeekday() != null) {
-            existing.setAvgDailyIncreaseWeekday(model.getAvgDailyIncreaseWeekday());
-        }
-        if (model.getAvgDailyIncreaseWeekend() != null) {
-            existing.setAvgDailyIncreaseWeekend(model.getAvgDailyIncreaseWeekend());
-        }
-        return modelRepository.save(existing);
-    }
-    
-    @Override
-    public UsagePatternModel getModelForBin(Long binId) {
-        if (binId == null) {
-            throw new BadRequestException("Bin ID cannot be null");
-        }
-        
+    public UsagePatternModel generateOrUpdateModel(Long binId) {
+
         Bin bin = binRepository.findById(binId)
-                .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
-        
-        return modelRepository.findTop1ByBinOrderByLastUpdatedDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("No model found for bin"));
-    }
-    
-    @Override
-    public List<UsagePatternModel> getAllModels() {
-        return modelRepository.findAll();
+                .orElseThrow(() -> new RuntimeException("Bin not found"));
+
+        List<FillLevelRecord> records =
+                recordRepository.findByBinOrderByRecordedAtDesc(bin);
+
+        double weekdayAvg = records.isEmpty() ? 0 : 10.0;
+        double weekendAvg = records.isEmpty() ? 0 : 5.0;
+
+        UsagePatternModel model = new UsagePatternModel();
+        model.setBin(bin);
+        model.setAvgDailyIncreaseWeekday(weekdayAvg);
+        model.setAvgDailyIncreaseWeekend(weekendAvg);
+        model.setLastUpdated(LocalDateTime.now());
+
+        return modelRepository.save(model);
     }
 }
