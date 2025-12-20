@@ -1,28 +1,31 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.OverflowPrediction;
+import com.example.demo.model.Zone;
 import com.example.demo.service.OverflowPredictionService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/predictions")
+@RequestMapping("/overflow")
 public class OverflowPredictionController {
 
-    private final OverflowPredictionService predictionService;
+    private final OverflowPredictionService service;
 
-    public OverflowPredictionController(OverflowPredictionService predictionService) {
-        this.predictionService = predictionService;
-    }
-
-    @PostMapping("/{binId}")
-    public OverflowPrediction predict(@PathVariable Long binId) {
-        return predictionService.predictOverflow(binId);
+    public OverflowPredictionController(OverflowPredictionService service) {
+        this.service = service;
     }
 
     @GetMapping("/zone/{zoneId}")
-    public List<OverflowPrediction> getPredictionsForZone(@PathVariable Long zoneId) {
-        return predictionService.getPredictionsForZone(zoneId);
+    public List<OverflowPrediction> getPredictionsByZone(@PathVariable Long zoneId) {
+        Zone zone = new Zone();
+        zone.setId(zoneId);
+        return service.getLatestPredictionsForZone(zone);
+    }
+
+    @PostMapping("/save")
+    public OverflowPrediction savePrediction(@RequestBody OverflowPrediction prediction) {
+        return service.savePrediction(prediction);
     }
 }
