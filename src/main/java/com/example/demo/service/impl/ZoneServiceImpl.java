@@ -29,6 +29,10 @@ public class ZoneServiceImpl implements ZoneService {
     public Zone saveZone(Zone zone) {
         return zoneRepository.save(zone);
     }
-
+@Override
+public Zone getZoneById(Long id) {
+    return zoneRepository.findById(id).orElse(null);
+}
+`
     // Add other service methods if needed
 }
