@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.model.zone;
 
 import jakarta.persistence.*;
 import java.util.List;
