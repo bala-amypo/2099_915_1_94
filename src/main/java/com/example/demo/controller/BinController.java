@@ -2,9 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Bin;
 import com.example.demo.service.BinService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/bins")
 public class BinController {
 
     private final BinService binService;
@@ -13,23 +16,28 @@ public class BinController {
         this.binService = binService;
     }
 
-    public Bin createBin(Bin bin) {
+    @PostMapping
+    public Bin createBin(@RequestBody Bin bin) {
         return binService.createBin(bin);
     }
 
-    public Bin updateBin(Long id, Bin bin) {
+    @PutMapping("/{id}")
+    public Bin updateBin(@PathVariable Long id, @RequestBody Bin bin) {
         return binService.updateBin(id, bin);
     }
 
-    public Bin getBin(Long id) {
+    @GetMapping("/{id}")
+    public Bin getBin(@PathVariable Long id) {
         return binService.getBinById(id);
     }
 
+    @GetMapping
     public List<Bin> getAllBins() {
         return binService.getAllBins();
     }
 
-    public void deactivateBin(Long id) {
+    @PutMapping("/{id}/deactivate")
+    public void deactivateBin(@PathVariable Long id) {
         binService.deactivateBin(id);
     }
 }

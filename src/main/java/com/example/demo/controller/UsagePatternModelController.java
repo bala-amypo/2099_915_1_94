@@ -2,9 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.UsagePatternModel;
 import com.example.demo.service.UsagePatternModelService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/models")
 public class UsagePatternModelController {
 
     private final UsagePatternModelService modelService;
@@ -13,19 +16,25 @@ public class UsagePatternModelController {
         this.modelService = modelService;
     }
 
-    public UsagePatternModel createModel(UsagePatternModel model) {
+    @PostMapping
+    public UsagePatternModel create(@RequestBody UsagePatternModel model) {
         return modelService.createModel(model);
     }
 
-    public UsagePatternModel updateModel(Long id, UsagePatternModel model) {
+    @PutMapping("/{id}")
+    public UsagePatternModel update(
+            @PathVariable Long id,
+            @RequestBody UsagePatternModel model) {
         return modelService.updateModel(id, model);
     }
 
-    public UsagePatternModel getModelForBin(Long binId) {
+    @GetMapping("/bin/{binId}")
+    public UsagePatternModel getForBin(@PathVariable Long binId) {
         return modelService.getModelForBin(binId);
     }
 
-    public List<UsagePatternModel> getAllModels() {
+    @GetMapping
+    public List<UsagePatternModel> getAll() {
         return modelService.getAllModels();
     }
 }

@@ -2,9 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Zone;
 import com.example.demo.service.ZoneService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/zones")
 public class ZoneController {
 
     private final ZoneService zoneService;
@@ -13,23 +16,28 @@ public class ZoneController {
         this.zoneService = zoneService;
     }
 
-    public Zone createZone(Zone zone) {
+    @PostMapping
+    public Zone createZone(@RequestBody Zone zone) {
         return zoneService.createZone(zone);
     }
 
-    public Zone updateZone(Long id, Zone zone) {
+    @PutMapping("/{id}")
+    public Zone updateZone(@PathVariable Long id, @RequestBody Zone zone) {
         return zoneService.updateZone(id, zone);
     }
 
-    public Zone getZone(Long id) {
+    @GetMapping("/{id}")
+    public Zone getZone(@PathVariable Long id) {
         return zoneService.getZoneById(id);
     }
 
+    @GetMapping
     public List<Zone> getAllZones() {
         return zoneService.getAllZones();
     }
 
-    public void deactivateZone(Long id) {
+    @PutMapping("/{id}/deactivate")
+    public void deactivateZone(@PathVariable Long id) {
         zoneService.deactivateZone(id);
     }
 }

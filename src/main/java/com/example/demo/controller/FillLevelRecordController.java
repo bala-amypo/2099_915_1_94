@@ -2,9 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.FillLevelRecord;
 import com.example.demo.service.FillLevelRecordService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/fill-records")
 public class FillLevelRecordController {
 
     private final FillLevelRecordService recordService;
@@ -13,15 +16,20 @@ public class FillLevelRecordController {
         this.recordService = recordService;
     }
 
-    public FillLevelRecord createRecord(FillLevelRecord record) {
+    @PostMapping
+    public FillLevelRecord create(@RequestBody FillLevelRecord record) {
         return recordService.createRecord(record);
     }
 
-    public FillLevelRecord getRecord(Long id) {
+    @GetMapping("/{id}")
+    public FillLevelRecord get(@PathVariable Long id) {
         return recordService.getRecordById(id);
     }
 
-    public List<FillLevelRecord> getRecentRecords(Long binId, int limit) {
+    @GetMapping("/bin/{binId}/recent")
+    public List<FillLevelRecord> recent(
+            @PathVariable Long binId,
+            @RequestParam int limit) {
         return recordService.getRecentRecords(binId, limit);
     }
 }

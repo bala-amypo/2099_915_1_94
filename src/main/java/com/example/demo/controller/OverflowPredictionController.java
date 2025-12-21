@@ -2,9 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.OverflowPrediction;
 import com.example.demo.service.OverflowPredictionService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/predictions")
 public class OverflowPredictionController {
 
     private final OverflowPredictionService predictionService;
@@ -13,11 +16,13 @@ public class OverflowPredictionController {
         this.predictionService = predictionService;
     }
 
-    public OverflowPrediction generatePrediction(Long binId) {
+    @PostMapping("/generate/{binId}")
+    public OverflowPrediction generate(@PathVariable Long binId) {
         return predictionService.generatePrediction(binId);
     }
 
-    public List<OverflowPrediction> getPredictionsForZone(Long zoneId) {
+    @GetMapping("/zone/{zoneId}/latest")
+    public List<OverflowPrediction> getByZone(@PathVariable Long zoneId) {
         return predictionService.getLatestPredictionsForZone(zoneId);
     }
 }
