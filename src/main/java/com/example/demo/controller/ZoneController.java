@@ -22,8 +22,18 @@ public class ZoneController {
     }
 
     @GetMapping("/{id}")
-    public Zone getZoneById(@PathVariable Long id) {
+    public Zone getZone(@PathVariable Long id) {
         return zoneService.getZoneById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Zone updateZone(@PathVariable Long id, @RequestBody Zone zone) {
+        return zoneService.updateZone(id, zone);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deactivateZone(@PathVariable Long id) {
+        zoneService.deactivateZone(id);
     }
 
     @GetMapping
