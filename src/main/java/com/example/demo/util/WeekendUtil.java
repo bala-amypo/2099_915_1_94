@@ -8,7 +8,7 @@ public class WeekendUtil {
     private WeekendUtil() {
         // Utility class – no object creation
     }
-
+`
     /**
      * Checks whether today is weekend
      */
