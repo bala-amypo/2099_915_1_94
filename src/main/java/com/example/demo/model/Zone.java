@@ -1,28 +1,21 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Table(name = "zones")
+@Getter
+@Setter
 public class Zone {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String zoneName;
 
-    @OneToMany(mappedBy = "zone", cascade = CascadeType.ALL)
-    private List<Bin> bins;
+    private String description;
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getZoneName() { return zoneName; }
-    public void setZoneName(String zoneName) { this.zoneName = zoneName; }
-
-    public List<Bin> getBins() { return bins; }
-    public void setBins(List<Bin> bins) { this.bins = bins; }
+    private Boolean active = true;
 }
