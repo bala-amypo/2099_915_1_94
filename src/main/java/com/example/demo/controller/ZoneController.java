@@ -15,6 +15,7 @@ public class ZoneController {
     public ZoneController(ZoneService zoneService) {
         this.zoneService = zoneService;
     }
+    
 
     @GetMapping
     public ResponseEntity<List<Zone>> getAllZones() {
