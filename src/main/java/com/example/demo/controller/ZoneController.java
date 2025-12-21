@@ -1,13 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Zone;
+import com.example.demo.model.Zone;
 import com.example.demo.service.ZoneService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-@RestController
-@RequestMapping("/zones")
 public class ZoneController {
 
     private final ZoneService zoneService;
@@ -15,15 +12,24 @@ public class ZoneController {
     public ZoneController(ZoneService zoneService) {
         this.zoneService = zoneService;
     }
-    
 
-    @GetMapping
-    public ResponseEntity<List<Zone>> getAllZones() {
-        return ResponseEntity.ok(zoneService.getAllZones());
+    public Zone createZone(Zone zone) {
+        return zoneService.createZone(zone);
     }
 
-    @PostMapping
-    public ResponseEntity<Zone> createZone(@RequestBody Zone zone) {
-        return ResponseEntity.ok(zoneService.saveZone(zone));
+    public Zone updateZone(Long id, Zone zone) {
+        return zoneService.updateZone(id, zone);
+    }
+
+    public Zone getZone(Long id) {
+        return zoneService.getZoneById(id);
+    }
+
+    public List<Zone> getAllZones() {
+        return zoneService.getAllZones();
+    }
+
+    public void deactivateZone(Long id) {
+        zoneService.deactivateZone(id);
     }
 }
