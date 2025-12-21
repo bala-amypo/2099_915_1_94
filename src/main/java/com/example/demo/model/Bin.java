@@ -1,90 +1,47 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "bins")
 public class Bin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String identifier;
-
-    private Double capacityLiters;
-
-    private Double latitude;
-    private Double longitude;
-
+    private int capacityLiters;
+    private double latitude;
+    private double longitude;
+    private boolean active;
     private String locationDescription;
-
-    private Boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "zone_id")
     private Zone zone;
 
-    // ---------------- Getters & Setters ----------------
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getIdentifier() { return identifier; }
+    public void setIdentifier(String identifier) { this.identifier = identifier; }
 
-    public String getIdentifier() {
-        return identifier;
-    }
+    public int getCapacityLiters() { return capacityLiters; }
+    public void setCapacityLiters(int capacityLiters) { this.capacityLiters = capacityLiters; }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
+    public double getLatitude() { return latitude; }
+    public void setLatitude(double latitude) { this.latitude = latitude; }
 
-    public Double getCapacityLiters() {
-        return capacityLiters;
-    }
+    public double getLongitude() { return longitude; }
+    public void setLongitude(double longitude) { this.longitude = longitude; }
 
-    public void setCapacityLiters(Double capacityLiters) {
-        this.capacityLiters = capacityLiters;
-    }
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 
-    public Double getLatitude() {
-        return latitude;
-    }
+    public String getLocationDescription() { return locationDescription; }
+    public void setLocationDescription(String locationDescription) { this.locationDescription = locationDescription; }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getLocationDescription() {
-        return locationDescription;
-    }
-
-    public void setLocationDescription(String locationDescription) {
-        this.locationDescription = locationDescription;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public Zone getZone() {
-        return zone;
-    }
-
-    public void setZone(Zone zone) {
-        this.zone = zone;
-    }
+    public Zone getZone() { return zone; }
+    public void setZone(Zone zone) { this.zone = zone; }
 }
