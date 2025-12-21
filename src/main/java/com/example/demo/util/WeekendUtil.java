@@ -35,3 +35,5 @@ public class WeekendUtil {
         return date != null && !isWeekend(date);
     }
 }
+
+kill -9 <PID>
