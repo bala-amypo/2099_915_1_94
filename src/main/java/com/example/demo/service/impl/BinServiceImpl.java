@@ -4,15 +4,18 @@ import com.example.demo.exception.*;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.BinService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class BinServiceImpl implements BinService {
 
     private final BinRepository binRepository;
     private final ZoneRepository zoneRepository;
 
-    public BinServiceImpl(BinRepository binRepository, ZoneRepository zoneRepository) {
+    public BinServiceImpl(BinRepository binRepository,
+                          ZoneRepository zoneRepository) {
         this.binRepository = binRepository;
         this.zoneRepository = zoneRepository;
     }
@@ -27,7 +30,6 @@ public class BinServiceImpl implements BinService {
         if (!zone.getActive())
             throw new BadRequestException("inactive");
 
-        bin.setZone(zone);
         return binRepository.save(bin);
     }
 

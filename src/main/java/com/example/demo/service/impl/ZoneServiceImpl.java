@@ -6,7 +6,7 @@ import com.example.demo.repository.ZoneRepository;
 import com.example.demo.service.ZoneService;
 
 import java.util.List;
-
+@Service
 public class ZoneServiceImpl implements ZoneService {
 
     private final ZoneRepository zoneRepository;

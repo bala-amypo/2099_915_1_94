@@ -7,7 +7,7 @@ import com.example.demo.service.FillLevelRecordService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Service
 public class FillLevelRecordServiceImpl implements FillLevelRecordService {
 
     private final FillLevelRecordRepository recordRepository;
