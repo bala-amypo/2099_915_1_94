@@ -1,25 +1,38 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
-@Entity
-@Getter
-@Setter
 public class UsagePatternModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private Bin bin;
     private Double avgDailyIncreaseWeekday;
     private Double avgDailyIncreaseWeekend;
+    private LocalDateTime lastUpdated;
 
-    private LocalDateTime lastUpdated = LocalDateTime.now();
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    @ManyToOne
-    @JoinColumn(name = "bin_id")
-    private Bin bin;
+    public Bin getBin() { return bin; }
+    public void setBin(Bin bin) { this.bin = bin; }
+
+    public Double getAvgDailyIncreaseWeekday() {
+        return avgDailyIncreaseWeekday;
+    }
+
+    public void setAvgDailyIncreaseWeekday(Double v) {
+        this.avgDailyIncreaseWeekday = v;
+    }
+
+    public Double getAvgDailyIncreaseWeekend() {
+        return avgDailyIncreaseWeekend;
+    }
+
+    public void setAvgDailyIncreaseWeekend(Double v) {
+        this.avgDailyIncreaseWeekend = v;
+    }
+
+    public LocalDateTime getLastUpdated() { return lastUpdated; }
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }
