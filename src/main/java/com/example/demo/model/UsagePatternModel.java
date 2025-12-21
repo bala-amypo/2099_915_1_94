@@ -1,19 +1,21 @@
 package com.example.demo.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToOne;
 
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
 public class UsagePatternModel {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
     private Bin bin;
+
     private Double avgDailyIncreaseWeekday;
     private Double avgDailyIncreaseWeekend;
-    private LocalDateTime lastUpdated;
+    private LocalDateTime lastUpdated = LocalDateTime.now();
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -24,7 +26,6 @@ public class UsagePatternModel {
     public Double getAvgDailyIncreaseWeekday() {
         return avgDailyIncreaseWeekday;
     }
-
     public void setAvgDailyIncreaseWeekday(Double v) {
         this.avgDailyIncreaseWeekday = v;
     }
@@ -32,7 +33,6 @@ public class UsagePatternModel {
     public Double getAvgDailyIncreaseWeekend() {
         return avgDailyIncreaseWeekend;
     }
-
     public void setAvgDailyIncreaseWeekend(Double v) {
         this.avgDailyIncreaseWeekend = v;
     }
