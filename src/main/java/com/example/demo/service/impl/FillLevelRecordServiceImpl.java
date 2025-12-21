@@ -7,38 +7,25 @@ import com.example.demo.model.FillLevelRecord;
 import com.example.demo.repository.BinRepository;
 import com.example.demo.repository.FillLevelRecordRepository;
 import com.example.demo.service.FillLevelRecordService;
-
+import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.stereotype.Service;
 
 @Service
-
 public class FillLevelRecordServiceImpl implements FillLevelRecordService {
 
     private final FillLevelRecordRepository recordRepository;
     private final BinRepository binRepository;
 
-    public FillLevelRecordServiceImpl(FillLevelRecordRepository recordRepository,
-                                      BinRepository binRepository) {
+    public FillLevelRecordServiceImpl(FillLevelRecordRepository recordRepository, BinRepository binRepository) {
         this.recordRepository = recordRepository;
         this.binRepository = binRepository;
     }
 
     @Override
     public FillLevelRecord createRecord(FillLevelRecord record) {
-        Bin bin = binRepository.findById(record.getBin().getId())
-                .orElseThrow(() -> new BadRequestException("Bin not found"));
-
-        if (!Boolean.TRUE.equals(bin.getActive())) {
-            throw new BadRequestException("Bin inactive");
-        }
-
-        if (record.getRecordedAt().isAfter(LocalDateTime.now())) {
-            throw new BadRequestException("Future record not allowed");
-        }
-
-        record.setBin(bin);
+        if (record.getRecordedAt().isAfter(LocalDateTime.now()))
+            throw new BadRequestException("Date cannot be in the future");
         return recordRepository.save(record);
     }
 
@@ -49,13 +36,15 @@ public class FillLevelRecordServiceImpl implements FillLevelRecordService {
     }
 
     @Override
-    public List<FillLevelRecord> getRecentRecords(Long binId, int limit) {
+    public List<FillLevelRecord> getRecordsForBin(Long binId) {
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
+        return recordRepository.findByBinOrderByRecordedAtDesc(bin);
+    }
 
-        List<FillLevelRecord> list =
-                recordRepository.findByBinOrderByRecordedAtDesc(bin);
-
-        return list.size() > limit ? list.subList(0, limit) : list;
+    @Override
+    public List<FillLevelRecord> getRecentRecords(Long binId, int limit) {
+        List<FillLevelRecord> all = getRecordsForBin(binId);
+        return all.stream().limit(limit).toList();
     }
 }

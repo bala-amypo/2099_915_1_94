@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Bin;
-import com.example.demo.entity.Zone;
+import com.example.demo.model.Bin;
 import java.util.List;
 
 public interface BinService {
-    Bin saveBin(Bin bin);
-    List<Bin> getBinsByZone(Zone zone);
+    Bin createBin(Bin bin);
+    Bin updateBin(Long id, Bin bin);
+    Bin getBinById(Long id);
+    List<Bin> getAllBins();
+    void deactivateBin(Long id);
 }
