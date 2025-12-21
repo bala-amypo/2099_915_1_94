@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "zones")
 public class Zone {
 
     @Id
@@ -12,7 +13,7 @@ public class Zone {
 
     private String zoneName;
 
-    @OneToMany(mappedBy = "zone", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "zone", cascade = CascadeType.ALL)
     private List<Bin> bins;
 
     // Getters and Setters

@@ -1,8 +1,10 @@
+
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "bins")
 public class Bin {
 
     @Id
