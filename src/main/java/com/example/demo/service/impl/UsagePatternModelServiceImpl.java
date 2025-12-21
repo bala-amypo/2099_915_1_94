@@ -9,6 +9,9 @@ import com.example.demo.repository.UsagePatternModelRepository;
 import com.example.demo.service.UsagePatternModelService;
 
 import java.time.LocalDateTime;
+import org.springframework.stereotype.Service;
+
+@Service
 
 public class UsagePatternModelServiceImpl implements UsagePatternModelService {
 

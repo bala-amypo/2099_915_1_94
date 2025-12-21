@@ -10,6 +10,9 @@ import com.example.demo.service.FillLevelRecordService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.stereotype.Service;
+
+@Service
 
 public class FillLevelRecordServiceImpl implements FillLevelRecordService {
 

@@ -9,6 +9,9 @@ import com.example.demo.repository.ZoneRepository;
 import com.example.demo.service.BinService;
 
 import java.util.List;
+import org.springframework.stereotype.Service;
+
+@Service
 
 public class BinServiceImpl implements BinService {
 
