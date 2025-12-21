@@ -1,77 +1,31 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.model.OverflowPrediction;
+import com.example.demo.model.Zone;
+import com.example.demo.repository.BinRepository;
+import com.example.demo.repository.OverflowPredictionRepository;
 import com.example.demo.service.OverflowPredictionService;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.util.List;
 
+@Service
 public class OverflowPredictionServiceImpl implements OverflowPredictionService {
 
-    private final BinRepository binRepository;
-    private final FillLevelRecordRepository recordRepository;
-    private final UsagePatternModelRepository modelRepository;
     private final OverflowPredictionRepository predictionRepository;
-    private final ZoneRepository zoneRepository;
+    private final BinRepository binRepository;
 
-    public OverflowPredictionServiceImpl(
-            BinRepository binRepository,
-            FillLevelRecordRepository recordRepository,
-            UsagePatternModelRepository modelRepository,
-            OverflowPredictionRepository predictionRepository,
-            ZoneRepository zoneRepository) {
-
-        this.binRepository = binRepository;
-        this.recordRepository = recordRepository;
-        this.modelRepository = modelRepository;
+    public OverflowPredictionServiceImpl(OverflowPredictionRepository predictionRepository,
+                                        BinRepository binRepository) {
         this.predictionRepository = predictionRepository;
-        this.zoneRepository = zoneRepository;
-    }
-
-    @Override
-    public OverflowPrediction generatePrediction(Long binId) {
-        Bin bin = binRepository.findById(binId)
-                .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
-
-        FillLevelRecord record = recordRepository
-                .findTop1ByBinOrderByRecordedAtDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("No records"));
-
-        UsagePatternModel model = modelRepository
-                .findTop1ByBinOrderByLastUpdatedDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("No model"));
-
-        double dailyIncrease =
-                LocalDate.now().getDayOfWeek() == DayOfWeek.SATURDAY ||
-                LocalDate.now().getDayOfWeek() == DayOfWeek.SUNDAY
-                        ? model.getAvgDailyIncreaseWeekend()
-                        : model.getAvgDailyIncreaseWeekday();
-
-        int days = (int) Math.ceil(
-                (100.0 - record.getFillPercentage()) / dailyIncrease
-        );
-
-        OverflowPrediction prediction = new OverflowPrediction();
-        prediction.setBin(bin);
-        prediction.setModelUsed(model);
-        prediction.setDaysUntilFull(days);
-        prediction.setPredictedFullDate(LocalDate.now().plusDays(days));
-
-        return predictionRepository.save(prediction);
+        this.binRepository = binRepository;
     }
 
     @Override
     public List<OverflowPrediction> getLatestPredictionsForZone(Long zoneId) {
-        Zone zone = zoneRepository.findById(zoneId)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
-
-        return predictionRepository.findLatestPredictionsForZone(zone);
+        // Fetch the Zone entity first
+        Zone zone = binRepository.findZoneById(zoneId);
+        // Use the correct repository method
+        return predictionRepository.findByBin_ZoneOrderByPredictedFullDateAsc(zone);
     }
 }
