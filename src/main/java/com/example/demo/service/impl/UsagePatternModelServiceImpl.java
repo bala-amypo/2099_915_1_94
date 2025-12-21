@@ -6,6 +6,8 @@ import com.example.demo.repository.*;
 import com.example.demo.service.UsagePatternModelService;
 
 import java.util.List;
+import org.springframework.stereotype.Service;
+
 @Service
 public class UsagePatternModelServiceImpl implements UsagePatternModelService {
 

@@ -6,6 +6,8 @@ import com.example.demo.service.OverflowPredictionService;
 
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.stereotype.Service;
+
 @Service
 public class OverflowPredictionServiceImpl implements OverflowPredictionService {
 
