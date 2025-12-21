@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface OverflowPredictionRepository extends JpaRepository<OverflowPrediction, Long> {
+public interface OverflowPredictionRepository
+        extends JpaRepository<OverflowPrediction, Long> {
 
-    List<OverflowPrediction> findLatestPredictionsForZone(Zone zone);
+    List<OverflowPrediction> findByBin_ZoneOrderByPredictedFullDateAsc(Zone zone);
 }
