@@ -1,16 +1,20 @@
+package com.example.demo.controller;
+
+import com.example.demo.security.JwtTokenProvider;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController() {
-        this.jwtTokenProvider =
-            new JwtTokenProvider("VerySecretKeyForJwtDemo1234567890");
+    public AuthController(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/login")
     public String login() {
-        return "Login success (demo)";
+        return "Login success";
     }
 }
