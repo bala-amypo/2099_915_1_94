@@ -1,11 +1,3 @@
-package com.example.demo.controller;
-
-import com.example.demo.model.OverflowPrediction;
-import com.example.demo.service.OverflowPredictionService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/predictions")
 public class OverflowPredictionController {

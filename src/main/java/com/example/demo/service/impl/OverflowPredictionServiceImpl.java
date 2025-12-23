@@ -1,15 +1,17 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
-import com.example.demo.util.WeekendUtil;
+import com.example.demo.service.OverflowPredictionService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
-@Service
-public class OverflowPredictionServiceImpl {
+@Service   // ⭐ THIS IS WHAT SPRING NEEDS
+public class OverflowPredictionServiceImpl implements OverflowPredictionService {
 
     private final BinRepository binRepository;
     private final FillLevelRecordRepository recordRepository;
@@ -22,8 +24,8 @@ public class OverflowPredictionServiceImpl {
             FillLevelRecordRepository recordRepository,
             UsagePatternModelRepository modelRepository,
             OverflowPredictionRepository predictionRepository,
-            ZoneRepository zoneRepository) {
-
+            ZoneRepository zoneRepository
+    ) {
         this.binRepository = binRepository;
         this.recordRepository = recordRepository;
         this.modelRepository = modelRepository;
@@ -31,30 +33,48 @@ public class OverflowPredictionServiceImpl {
         this.zoneRepository = zoneRepository;
     }
 
+    @Override
     public OverflowPrediction generatePrediction(Long binId) {
+
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
 
-        FillLevelRecord record = recordRepository
-                .findTop1ByBinOrderByRecordedAtDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("No records"));
+        if (!bin.getActive()) {
+            throw new BadRequestException("Bin is inactive");
+        }
 
-        UsagePatternModel model = modelRepository
-                .findTop1ByBinOrderByLastUpdatedDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("No model"));
+        FillLevelRecord latestRecord =
+                recordRepository.findTop1ByBinOrderByRecordedAtDesc(bin)
+                        .orElseThrow(() -> new BadRequestException("No fill level data found"));
 
-        double dailyIncrease = WeekendUtil.isWeekend(LocalDate.now())
-                ? model.getAvgDailyIncreaseWeekend()
-                : model.getAvgDailyIncreaseWeekday();
+        UsagePatternModel model =
+                modelRepository.findTop1ByBinOrderByLastUpdatedDesc(bin)
+                        .orElseThrow(() -> new BadRequestException("Usage model not found"));
 
-        int days = (int) ((100 - record.getFillPercentage()) / dailyIncrease);
+        double remaining = 100 - latestRecord.getFillPercentage();
+        double dailyIncrease = model.getAvgDailyIncreaseWeekday();
+
+        if (dailyIncrease <= 0) {
+            throw new BadRequestException("Invalid usage pattern");
+        }
+
+        int daysUntilFull = (int) Math.ceil(remaining / dailyIncrease);
 
         OverflowPrediction prediction = new OverflowPrediction();
         prediction.setBin(bin);
+        prediction.setDaysUntilFull(daysUntilFull);
+        prediction.setPredictedFullDate(LocalDate.now().plusDays(daysUntilFull));
         prediction.setModelUsed(model);
-        prediction.setDaysUntilFull(days);
-        prediction.setPredictedFullDate(LocalDate.now().plusDays(days));
 
         return predictionRepository.save(prediction);
+    }
+
+    @Override
+    public List<OverflowPrediction> getLatestPredictionsForZone(Long zoneId) {
+
+        Zone zone = zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+
+        return predictionRepository.findLatestPredictionsForZone(zone);
     }
 }
