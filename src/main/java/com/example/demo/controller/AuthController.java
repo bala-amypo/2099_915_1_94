@@ -4,7 +4,7 @@ import com.example.demo.security.JwtTokenProvider;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -15,6 +15,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login() {
-        return "Login success";
+        return "JWT ready";
     }
 }
