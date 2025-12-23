@@ -1,14 +1,15 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.Zone;
-import com.example.demo.repository.ZoneRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+import com.example.demo.model.Zone;
+import com.example.demo.repository.ZoneRepository;
+import com.example.demo.service.ZoneService;
+
 @Service
-public class ZoneServiceImpl {
+public class ZoneServiceImpl implements ZoneService {
 
     private final ZoneRepository zoneRepository;
 
@@ -16,30 +17,38 @@ public class ZoneServiceImpl {
         this.zoneRepository = zoneRepository;
     }
 
-    public Zone createZone(Zone zone) {
+    @Override
+    public Zone create(Zone zone) {
         zone.setActive(true);
         return zoneRepository.save(zone);
     }
 
-    public Zone getZoneById(Long id) {
-        return zoneRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+    @Override
+    public Zone update(Long id, Zone zone) {
+
+        Zone existing = getById(id);
+
+        existing.setZoneName(zone.getZoneName());
+        existing.setDescription(zone.getDescription());
+
+        return zoneRepository.save(existing);
     }
 
-    public List<Zone> getAllZones() {
+    @Override
+    public Zone getById(Long id) {
+        return zoneRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Zone not found: " + id));
+    }
+
+    @Override
+    public List<Zone> getAll() {
         return zoneRepository.findAll();
     }
 
-    public Zone updateZone(Long id, Zone update) {
-        Zone zone = getZoneById(id);
-        if (update.getDescription() != null) {
-            zone.setDescription(update.getDescription());
-        }
-        return zoneRepository.save(zone);
-    }
-
-    public void deactivateZone(Long id) {
-        Zone zone = getZoneById(id);
+    @Override
+    public void deactivate(Long id) {
+        Zone zone = getById(id);
         zone.setActive(false);
         zoneRepository.save(zone);
     }
