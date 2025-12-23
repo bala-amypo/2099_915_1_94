@@ -12,12 +12,12 @@ import com.example.demo.repository.UsagePatternModelRepository;
 import com.example.demo.service.UsagePatternModelService;
 
 @Service
-public class UsagePatternModelServiceImpl implements UsagePatternModelService {
+public class UsagePatternModelServiceImpl
+        implements UsagePatternModelService {
 
     private final UsagePatternModelRepository modelRepository;
     private final BinRepository binRepository;
 
-    // ✅ Constructor injection (recommended)
     public UsagePatternModelServiceImpl(
             UsagePatternModelRepository modelRepository,
             BinRepository binRepository) {
@@ -25,54 +25,47 @@ public class UsagePatternModelServiceImpl implements UsagePatternModelService {
         this.binRepository = binRepository;
     }
 
-    // ✅ Create new usage pattern
     @Override
-    public UsagePatternModel createModel(UsagePatternModel model) {
-
+    public UsagePatternModel create(UsagePatternModel model) {
         model.setLastUpdated(LocalDateTime.now());
         return modelRepository.save(model);
     }
 
-    // ✅ Get all models
     @Override
-    public List<UsagePatternModel> getAllModels() {
-        return modelRepository.findAll();
+    public UsagePatternModel update(Long id, UsagePatternModel model) {
+
+        UsagePatternModel existing = getById(id);
+
+        existing.setAvgDailyIncreaseWeekday(
+                model.getAvgDailyIncreaseWeekday());
+        existing.setAvgDailyIncreaseWeekend(
+                model.getAvgDailyIncreaseWeekend());
+
+        existing.setLastUpdated(LocalDateTime.now());
+        return modelRepository.save(existing);
     }
 
-    // ✅ Get model by ID
     @Override
-    public UsagePatternModel getModelById(Long id) {
+    public UsagePatternModel getById(Long id) {
         return modelRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("UsagePatternModel not found with id: " + id));
+                        new RuntimeException("Model not found: " + id));
     }
 
-    // ✅ Get model by Bin ID (THIS FIXES YOUR ERROR)
     @Override
-    public UsagePatternModel getModelByBinId(Long binId) {
+    public UsagePatternModel getByBinId(Long binId) {
 
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() ->
-                        new RuntimeException("Bin not found with id: " + binId));
+                        new RuntimeException("Bin not found: " + binId));
 
         return modelRepository.findByBin(bin)
                 .orElseThrow(() ->
-                        new RuntimeException("UsagePatternModel not found for bin id: " + binId));
+                        new RuntimeException("Model not found for bin"));
     }
 
-    // ✅ Update model
     @Override
-    public UsagePatternModel updateModel(Long id, UsagePatternModel updatedModel) {
-
-        UsagePatternModel existing = getModelById(id);
-
-        existing.setAvgDailyIncreaseWeekday(
-                updatedModel.getAvgDailyIncreaseWeekday());
-        existing.setAvgDailyIncreaseWeekend(
-                updatedModel.getAvgDailyIncreaseWeekend());
-
-        existing.setLastUpdated(LocalDateTime.now());
-
-        return modelRepository.save(existing);
+    public List<UsagePatternModel> getAll() {
+        return modelRepository.findAll();
     }
 }

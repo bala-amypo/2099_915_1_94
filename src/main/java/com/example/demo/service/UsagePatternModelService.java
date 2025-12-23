@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import java.util.List;
-
 import com.example.demo.model.UsagePatternModel;
 
 public interface UsagePatternModelService {
@@ -10,7 +9,9 @@ public interface UsagePatternModelService {
 
     UsagePatternModel update(Long id, UsagePatternModel model);
 
-    List<UsagePatternModel> getAll();
+    UsagePatternModel getById(Long id);
 
     UsagePatternModel getByBinId(Long binId);
+
+    List<UsagePatternModel> getAll();
 }

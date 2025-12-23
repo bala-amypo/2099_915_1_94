@@ -48,7 +48,8 @@ public class OverflowPredictionServiceImpl implements OverflowPredictionService 
                         .orElseThrow(() -> new BadRequestException("No fill level data found"));
 
         UsagePatternModel model =
-                modelRepository.findTop1ByBinOrderByLastUpdatedDesc(bin)
+                modelRepository.findTopByBinOrderByLastUpdatedDesc(bin)
+
                         .orElseThrow(() -> new BadRequestException("Usage model not found"));
 
         double remaining = 100 - latestRecord.getFillPercentage();
