@@ -1,13 +1,22 @@
 package com.example.demo.repository;
 
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import com.example.demo.model.OverflowPrediction;
 import com.example.demo.model.Zone;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 
 public interface OverflowPredictionRepository
         extends JpaRepository<OverflowPrediction, Long> {
 
-    List<OverflowPrediction> findLatestPredictionsForZone(Zone zone);
+    @Query("""
+        SELECT op
+        FROM OverflowPrediction op
+        WHERE op.bin.zone = :zone
+        ORDER BY op.predictedFullDate DESC
+    """)
+    List<OverflowPrediction> findLatestPredictionsForZone(@Param("zone") Zone zone);
 }
