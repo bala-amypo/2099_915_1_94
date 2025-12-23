@@ -1,26 +1,29 @@
 package com.example.demo.security;
 
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private static final Map<String, DemoUser> USERS = new HashMap<>();
+    private final Map<String, DemoUser> users = new HashMap<>();
 
-    static {
-        USERS.put("admin@city.com",
-                new DemoUser(1L, "Admin", "admin@city.com", "ADMIN", "admin123"));
+    public CustomUserDetailsService() {
+        users.put("admin@city.com",
+                new DemoUser("Admin", "admin@city.com", "admin123", "ADMIN"));
     }
 
     @Override
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        DemoUser user = USERS.get(email);
+        DemoUser user = users.get(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -32,44 +35,33 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public DemoUser registerUser(String name, String email, String password) {
-        if (USERS.containsKey(email)) {
+        if (users.containsKey(email)) {
             throw new RuntimeException("User already exists");
         }
-
-        DemoUser user = new DemoUser(
-                (long) (USERS.size() + 1),
-                name,
-                email,
-                "USER",
-                password
-        );
-        USERS.put(email, user);
+        DemoUser user = new DemoUser(name, email, password, "USER");
+        users.put(email, user);
         return user;
     }
 
     public DemoUser getByEmail(String email) {
-        return USERS.get(email);
+        return users.get(email);
     }
 
-    // Inner class
     public static class DemoUser {
-        private Long id;
-        private String name;
-        private String email;
-        private String role;
-        private String password;
+        private final String name;
+        private final String email;
+        private final String password;
+        private final String role;
 
-        public DemoUser(Long id, String name, String email, String role, String password) {
-            this.id = id;
+        public DemoUser(String name, String email, String password, String role) {
             this.name = name;
             this.email = email;
-            this.role = role;
             this.password = password;
+            this.role = role;
         }
 
-        public Long getId() { return id; }
         public String getEmail() { return email; }
-        public String getRole() { return role; }
         public String getPassword() { return password; }
+        public String getRole() { return role; }
     }
 }

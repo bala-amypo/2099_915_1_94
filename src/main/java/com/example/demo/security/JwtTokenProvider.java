@@ -8,11 +8,10 @@ import java.util.Date;
 
 public class JwtTokenProvider {
 
-    private final String secretKey;
-    private final long validity = 24 * 60 * 60 * 1000; // 1 day
+    private final String secret;
 
-    public JwtTokenProvider(String secretKey) {
-        this.secretKey = secretKey;
+    public JwtTokenProvider(String secret) {
+        this.secret = secret;
     }
 
     public String generateToken(Authentication authentication,
@@ -22,11 +21,11 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(email)
-                .claim("userId", userId)
                 .claim("role", role)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + validity))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 }
