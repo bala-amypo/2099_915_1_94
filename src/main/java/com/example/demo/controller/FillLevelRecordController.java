@@ -22,14 +22,14 @@ public class FillLevelRecordController {
     }
 
     @GetMapping("/{id}")
-    public FillLevelRecord get(@PathVariable Long id) {
+    public FillLevelRecord getById(@PathVariable Long id) {
         return recordService.getRecordById(id);
     }
 
     @GetMapping("/bin/{binId}/recent")
-    public List<FillLevelRecord> recent(
+    public List<FillLevelRecord> getRecent(
             @PathVariable Long binId,
-            @RequestParam int limit) {
+            @RequestParam(defaultValue = "5") int limit) {
         return recordService.getRecentRecords(binId, limit);
     }
 }
