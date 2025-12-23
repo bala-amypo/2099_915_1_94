@@ -21,19 +21,20 @@ public class BinController {
         return binService.createBin(bin);
     }
 
-    @PutMapping("/{id}")
-    public Bin updateBin(@PathVariable Long id, @RequestBody Bin bin) {
-        return binService.updateBin(id, bin);
-    }
-
     @GetMapping("/{id}")
-    public Bin getBin(@PathVariable Long id) {
+    public Bin getBinById(@PathVariable Long id) {
         return binService.getBinById(id);
     }
 
     @GetMapping
     public List<Bin> getAllBins() {
         return binService.getAllBins();
+    }
+
+    @PutMapping("/{id}")
+    public Bin updateBin(@PathVariable Long id,
+                         @RequestBody Bin bin) {
+        return binService.updateBin(id, bin);
     }
 
     @PutMapping("/{id}/deactivate")
