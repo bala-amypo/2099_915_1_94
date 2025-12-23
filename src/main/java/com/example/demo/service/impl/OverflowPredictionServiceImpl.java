@@ -1,54 +1,25 @@
-package com.example.demo.service.impl;
+@Override
+public OverflowPrediction generatePrediction(Long binId) {
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
-import com.example.demo.service.OverflowPredictionService;
+    Bin bin = binRepository.findById(binId)
+            .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
 
-import java.time.LocalDate;
-import java.util.List;
-import org.springframework.stereotype.Service;
+    FillLevelRecord record = recordRepository
+            .findTop1ByBinOrderByRecordedAtDesc(bin)
+            .orElseThrow(() -> new BadRequestException("No fill records"));
 
-@Service
-public class OverflowPredictionServiceImpl implements OverflowPredictionService {
+    UsagePatternModel model = modelRepository
+            .findTop1ByBinOrderByLastUpdatedDesc(bin)
+            .orElseThrow(() -> new BadRequestException("No usage model"));
 
-    private final BinRepository binRepository;
-    private final FillLevelRecordRepository recordRepository;
-    private final UsagePatternModelRepository modelRepository;
-    private final OverflowPredictionRepository predictionRepository;
-    private final ZoneRepository zoneRepository;
+    double remaining = 100 - record.getFillPercentage();
+    int days = (int) Math.ceil(remaining / model.getAvgDailyIncreaseWeekday());
 
-    public OverflowPredictionServiceImpl(
-            BinRepository binRepository,
-            FillLevelRecordRepository recordRepository,
-            UsagePatternModelRepository modelRepository,
-            OverflowPredictionRepository predictionRepository,
-            ZoneRepository zoneRepository) {
+    OverflowPrediction prediction = new OverflowPrediction();
+    prediction.setBin(bin);
+    prediction.setModelUsed(model);
+    prediction.setDaysUntilFull(days);
+    prediction.setPredictedFullDate(LocalDate.now().plusDays(days));
 
-        this.binRepository = binRepository;
-        this.recordRepository = recordRepository;
-        this.modelRepository = modelRepository;
-        this.predictionRepository = predictionRepository;
-        this.zoneRepository = zoneRepository;
-    }
-
-    public OverflowPrediction generatePrediction(Long binId) {
-        Bin bin = binRepository.findById(binId).get();
-        FillLevelRecord record =
-                recordRepository.findTop1ByBinOrderByRecordedAtDesc(bin).get();
-        UsagePatternModel model =
-                modelRepository.findTop1ByBinOrderByLastUpdatedDesc(bin).get();
-
-        OverflowPrediction p = new OverflowPrediction();
-        p.setBin(bin);
-        p.setModelUsed(model);
-        p.setDaysUntilFull(3);
-        p.setPredictedFullDate(LocalDate.now().plusDays(3));
-
-        return predictionRepository.save(p);
-    }
-
-    public List<OverflowPrediction> getLatestPredictionsForZone(Long zoneId) {
-        Zone zone = zoneRepository.findById(zoneId).get();
-        return predictionRepository.findLatestPredictionsForZone(zone);
-    }
+    return predictionRepository.save(prediction);
 }
