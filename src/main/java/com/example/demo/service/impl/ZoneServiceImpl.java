@@ -1,15 +1,12 @@
 package com.example.demo.service.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Zone;
 import com.example.demo.repository.ZoneRepository;
-import com.example.demo.service.ZoneService;
+import org.springframework.stereotype.Service;
 
 @Service
-public class ZoneServiceImpl implements ZoneService {
+public class ZoneServiceImpl {
 
     private final ZoneRepository zoneRepository;
 
@@ -17,38 +14,26 @@ public class ZoneServiceImpl implements ZoneService {
         this.zoneRepository = zoneRepository;
     }
 
-    @Override
-    public Zone create(Zone zone) {
+    public Zone createZone(Zone zone) {
         zone.setActive(true);
         return zoneRepository.save(zone);
     }
 
-    @Override
-    public Zone update(Long id, Zone zone) {
+    public Zone getZoneById(Long id) {
+        return zoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+    }
 
-        Zone existing = getById(id);
-
-        existing.setZoneName(zone.getZoneName());
-        existing.setDescription(zone.getDescription());
-
+    public Zone updateZone(Long id, Zone update) {
+        Zone existing = getZoneById(id);
+        if (update.getDescription() != null) {
+            existing.setDescription(update.getDescription());
+        }
         return zoneRepository.save(existing);
     }
 
-    @Override
-    public Zone getById(Long id) {
-        return zoneRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Zone not found: " + id));
-    }
-
-    @Override
-    public List<Zone> getAll() {
-        return zoneRepository.findAll();
-    }
-
-    @Override
-    public void deactivate(Long id) {
-        Zone zone = getById(id);
+    public void deactivateZone(Long id) {
+        Zone zone = getZoneById(id);
         zone.setActive(false);
         zoneRepository.save(zone);
     }
