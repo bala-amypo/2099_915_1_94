@@ -2,45 +2,50 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-@Component   // ⭐ THIS IS THE FIX
+@Component
 public class JwtTokenProvider {
 
-    private final String jwtSecret;
-    private final long jwtExpirationMs = 86400000; // 1 day
+    // 🔐 256-bit+ secret (IMPORTANT)
+    private static final String SECRET =
+            "VerySecretKeyForJwtDemo1234567890VerySecretKeyForJwtDemo";
 
-    // ✅ Spring Boot runtime constructor
-    public JwtTokenProvider(
-            @Value("${app.jwt.secret:VerySecretKeyForJwtDemo1234567890}")
-            String jwtSecret) {
-        this.jwtSecret = jwtSecret;
-    }
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
-    // ✅ Test-only constructor (DO NOT REMOVE)
+    private final SecretKey secretKey;
+
+    // ✅ Default constructor (Spring + TestNG compatible)
     public JwtTokenProvider() {
-        this.jwtSecret = "VerySecretKeyForJwtDemo1234567890";
+        this.secretKey = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(Authentication authentication,
-                                Long userId,
-                                String role,
-                                String email) {
+    // --------------------------------------------------
+    // GENERATE JWT TOKEN
+    // --------------------------------------------------
+    public String generateToken(
+            Authentication authentication,
+            Long userId,
+            String role,
+            String email) {
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(authentication.getName())
                 .claim("userId", userId)
                 .claim("role", role)
+                .claim("email", email)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 }
