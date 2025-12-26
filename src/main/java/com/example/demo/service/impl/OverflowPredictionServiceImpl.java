@@ -6,7 +6,6 @@ import com.example.demo.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 public class OverflowPredictionServiceImpl {
@@ -41,7 +40,7 @@ public class OverflowPredictionServiceImpl {
                 .orElseThrow(() -> new ResourceNotFoundException("No fill records"));
 
         UsagePatternModel model = modelRepository
-                .findTop1ByBinOrderByLastUpdatedDesc(bin)   // ✅ FIXED
+                .findTop1ByBinOrderByLastUpdatedDesc(bin)
                 .orElseThrow(() -> new ResourceNotFoundException("No model found"));
 
         double remaining = 100 - latestRecord.getFillPercentage();
@@ -54,7 +53,6 @@ public class OverflowPredictionServiceImpl {
         prediction.setModelUsed(model);
         prediction.setDaysUntilFull(days);
         prediction.setPredictedFullDate(LocalDate.now().plusDays(days));
-        prediction.setCreatedAt(LocalDateTime.now());
 
         return predictionRepository.save(prediction);
     }
