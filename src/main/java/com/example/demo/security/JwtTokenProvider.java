@@ -2,45 +2,71 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-@Component   // ⭐ THIS IS THE FIX
+@Component
 public class JwtTokenProvider {
 
-    private final String jwtSecret;
-    private final long jwtExpirationMs = 86400000; // 1 day
+    // --------------------------------------------------
+    // REQUIRED BY TESTS (expiration config)
+    // --------------------------------------------------
+    @Value("${jwt.expiration:3600000}")
+    private long jwtExpiration;
 
-    // ✅ Spring Boot runtime constructor
-    public JwtTokenProvider(
-            @Value("${app.jwt.secret:VerySecretKeyForJwtDemo1234567890}")
-            String jwtSecret) {
-        this.jwtSecret = jwtSecret;
-    }
+    // --------------------------------------------------
+    // SECRET KEY (must be >= 256 bits)
+    // --------------------------------------------------
+    private SecretKey secretKey;
 
-    // ✅ Test-only constructor (DO NOT REMOVE)
+    // --------------------------------------------------
+    // ✅ REQUIRED NO-ARG CONSTRUCTOR (Spring)
+    // --------------------------------------------------
     public JwtTokenProvider() {
-        this.jwtSecret = "VerySecretKeyForJwtDemo1234567890";
+        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
+    // --------------------------------------------------
+    // ✅ REQUIRED STRING CONSTRUCTOR (TestNG)
+    // --------------------------------------------------
+    public JwtTokenProvider(String secret) {
+        this.secretKey = Keys.hmacShaKeyFor(
+                secret.getBytes(StandardCharsets.UTF_8)
+        );
+    }
+
+    // --------------------------------------------------
+    // ✅ EXACT METHOD SIGNATURE EXPECTED BY TESTS
+    // --------------------------------------------------
     public String generateToken(Authentication authentication,
                                 Long userId,
                                 String role,
                                 String email) {
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+        Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(authentication.getName())
                 .claim("userId", userId)
                 .claim("role", role)
+                .claim("email", email)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    // --------------------------------------------------
+    // ✅ REQUIRED BY testSecurity_JwtExpirationConfig
+    // --------------------------------------------------
+    public long getJwtExpiration() {
+        return jwtExpiration;
     }
 }
