@@ -1,13 +1,17 @@
 package com.example.demo.repository;
 
-import com.example.demo.model.Bin;
-import com.example.demo.model.UsagePatternModel;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.example.demo.model.Bin;
+import com.example.demo.model.UsagePatternModel;
 
 public interface UsagePatternModelRepository
         extends JpaRepository<UsagePatternModel, Long> {
 
-    Optional<UsagePatternModel> findTop1ByBinOrderByLastUpdatedDesc(Bin bin);
+    Optional<UsagePatternModel> findByBin(Bin bin);
+
+    // ✅ REQUIRED for OverflowPredictionService
+    Optional<UsagePatternModel> findTopByBinOrderByLastUpdatedDesc(Bin bin);
 }
