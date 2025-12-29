@@ -14,36 +14,26 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    // --------------------------------------------------
-    // REQUIRED BY TESTS (expiration config)
-    // --------------------------------------------------
+    
     @Value("${jwt.expiration:3600000}")
     private long jwtExpiration;
 
-    // --------------------------------------------------
-    // SECRET KEY (must be >= 256 bits)
-    // --------------------------------------------------
+    
     private SecretKey secretKey;
 
-    // --------------------------------------------------
-    // ✅ REQUIRED NO-ARG CONSTRUCTOR (Spring)
-    // --------------------------------------------------
+    
     public JwtTokenProvider() {
         this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
-    // --------------------------------------------------
-    // ✅ REQUIRED STRING CONSTRUCTOR (TestNG)
-    // --------------------------------------------------
+    
     public JwtTokenProvider(String secret) {
         this.secretKey = Keys.hmacShaKeyFor(
                 secret.getBytes(StandardCharsets.UTF_8)
         );
     }
 
-    // --------------------------------------------------
-    // ✅ EXACT METHOD SIGNATURE EXPECTED BY TESTS
-    // --------------------------------------------------
+    
     public String generateToken(Authentication authentication,
                                 Long userId,
                                 String role,

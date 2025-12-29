@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   // ⭐ THIS IS REQUIRED
+@Service 
 public class ZoneServiceImpl implements ZoneService {
 
     private final ZoneRepository zoneRepository;

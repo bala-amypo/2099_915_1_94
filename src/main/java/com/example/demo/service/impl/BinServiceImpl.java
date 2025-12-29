@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   // ⭐ VERY IMPORTANT
+@Service  
 public class BinServiceImpl implements BinService {
 
     private final BinRepository binRepository;
