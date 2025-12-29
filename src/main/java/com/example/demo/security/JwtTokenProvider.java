@@ -63,9 +63,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // --------------------------------------------------
-    // ✅ REQUIRED BY testSecurity_JwtExpirationConfig
-    // --------------------------------------------------
+  
     public long getJwtExpiration() {
         return jwtExpiration;
     }
